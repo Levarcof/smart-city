@@ -30,7 +30,8 @@ export async function POST(req) {
             name,
             email,
             image,
-            password: hashPassword
+            password: hashPassword,
+            role : 'user'
         })
 
         return NextResponse.json(

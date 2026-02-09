@@ -5,7 +5,7 @@ import { Report } from "@/app/models/reportModel";
 export async function POST (req){
     try{
         const {id , email} = await req.json()
-        if(!id || !email){
+        if(!id ){
              return NextResponse.json(
             {message : "report not found"},
             {status :400}
