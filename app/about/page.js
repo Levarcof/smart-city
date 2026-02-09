@@ -16,9 +16,9 @@ export default function AboutPage() {
 
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
           <div>
-            <p className="text-green-300 font-semibold tracking-widest mb-4">
+            {/* <p className="text-green-300 font-semibold tracking-widest mb-4">
               SAFE ROUTE ANALYZER
-            </p>
+            </p> */}
 
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
               Redefining Safety <br />
