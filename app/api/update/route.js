@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/app/lib/db";
 import User from "@/app/models/User";
 import { Report } from "@/app/models/reportModel";
+import { GarbageReport } from "@/app/models/garbadgeReport";
 
 export async function PUT(req) {
     try {
@@ -25,6 +26,11 @@ export async function PUT(req) {
         const reports = await Report.updateMany(
             { email },
             { $set: { name } }
+        )
+
+        const garbageReport = await GarbageReport.updateMany(
+            {email},
+            {$set : {name}}
         )
 
         return NextResponse.json(

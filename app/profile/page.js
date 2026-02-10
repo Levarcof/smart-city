@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useUser } from "../context/UserContext";
+import { User, Settings, Trash2, MapPin, FileText, X } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, setUser } = useUser();
@@ -13,9 +14,16 @@ export default function ProfilePage() {
   const [image, setImage] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("reports");
 
-  // Load user data
+  const [activeTab, setActiveTab] = useState("routes");
+
+  // ✅ IMAGE PREVIEW STATE
+  const [previewImage, setPreviewImage] = useState(null);
+
+  // ✅ DELETE CONFIRM MODAL STATE
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+
   useEffect(() => {
     if (user) {
       setName(user.name || "");
@@ -24,13 +32,24 @@ export default function ProfilePage() {
     }
   }, [user]);
 
-  // Fetch reports
+  const getReportApi = () => {
+    if (activeTab === "routes") return "/api/myReport/road";
+    if (activeTab === "garbage") return "/api/myReport/garbage";
+    if (activeTab === "medical") return "/api/myReport/medical";
+  };
+
+  const getDeleteApi = () => {
+    if (activeTab === "routes") return "/api/report/solve";
+    if (activeTab === "garbage") return "/api/garbage/solve";
+    if (activeTab === "medical") return "/api/medical/solve";
+  };
+
   useEffect(() => {
     if (!user?.email) return;
 
     async function fetchReports() {
       try {
-        const res = await fetch("/api/myReport", {
+        const res = await fetch(getReportApi(), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: user.email }),
@@ -41,10 +60,10 @@ export default function ProfilePage() {
         console.log(err);
       }
     }
-    fetchReports();
-  }, [user]);
 
-  // Update profile
+    fetchReports();
+  }, [user, activeTab]);
+
   const updateProfile = async () => {
     setLoading(true);
     try {
@@ -68,162 +87,165 @@ export default function ProfilePage() {
     setLoading(false);
   };
 
-  // Remove report
-  const removeReport = async (rep) => {
+  // ✅ OPEN DELETE CONFIRM MODAL
+  const openDeleteModal = (rep) => {
+    setSelectedReport(rep);
+    setDeleteModal(true);
+  };
+
+  // ✅ CONFIRM DELETE
+  const confirmDelete = async () => {
+    if (!selectedReport) return;
+
     try {
-      const res = await fetch("/api/report/solve", {
+      const res = await fetch(getDeleteApi(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: rep._id, email: user.email }),
+        body: JSON.stringify({ id: selectedReport._id, email: user.email }),
       });
 
       const data = await res.json();
       if (data.success) {
-        setReports(data.allReports);
-        alert("Report removed ✅");
+        setReports(data.allReports || []);
       } else {
         alert("Failed ❌");
       }
     } catch (error) {
       console.log(error);
     }
+
+    setDeleteModal(false);
+    setSelectedReport(null);
   };
 
   return (
-    <>
+    <div>
       <Navbar />
 
-      <div className="min-h-screen bg-[#050b16] text-white overflow-hidden">
+      <div className="min-h-screen bg-[#020617] text-white">
 
-        {/* 🌌 BACKGROUND GLOW */}
-        <div className="fixed inset-0 -z-10">
-          <div className="absolute top-[-200px] left-[-200px] w-[400px] h-[400px] bg-green-500/20 blur-[140px]"></div>
-          <div className="absolute bottom-[-200px] right-[-200px] w-[400px] h-[400px] bg-emerald-400/20 blur-[140px]"></div>
+        {/* HEADER */}
+        <div className="max-w-7xl text-center mx-auto px-2 sm:px-4 pt-10 pb-6">
+          <h1 className="text-3xl md:text-4xl font-bold">Profile Dashboard</h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Manage your profile and reports in one place
+          </p>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 pt-12 grid lg:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* ================= LEFT PROFILE CARD ================= */}
-          <div className="relative bg-gradient-to-br from-green-600/20 to-emerald-500/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+          {/* LEFT PROFILE CARD */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
 
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-white/5 to-transparent"></div>
-
-            <div className="relative flex flex-col items-center text-center">
-
-              {/* PROFILE IMAGE */}
-              <div className="relative group">
+            <div className="flex flex-col items-center text-center">
+              <div className="relative">
                 <img
                   src={image || "/default-avatar.png"}
                   alt="profile"
-                  className="w-32 h-32 rounded-full border-4 border-green-400 shadow-2xl object-cover transition group-hover:scale-105"
+                  className="w-28 h-28 rounded-full border-4 border-green-400 object-cover"
                 />
                 <button
                   onClick={() => setEditMode(true)}
-                  className="absolute bottom-0 right-0 bg-green-500 hover:bg-green-600 text-black text-xs px-3 py-1 rounded-full shadow-lg"
+                  className="absolute bottom-0 right-0 bg-green-500 text-black text-xs px-3 py-1 rounded-full"
                 >
                   Edit
                 </button>
               </div>
 
-              {/* NAME + EMAIL */}
-              <h1 className="mt-4 text-2xl font-bold tracking-wide">
-                {user?.name || "Guest User"}
-              </h1>
-              <p className="text-gray-300 text-sm">{user?.email}</p>
+              <h2 className="mt-4 text-xl font-semibold flex items-center gap-2">
+                <User size={18} /> {user?.name || "Guest User"}
+              </h2>
+              <p className="text-gray-400 text-sm">{user?.email}</p>
 
-              {/* TOTAL REPORTS ONLY */}
-              <div className="mt-6 w-full">
-                <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/5 rounded-2xl p-5 border border-green-500/20 shadow-xl text-center">
-                  <p className="text-xs uppercase tracking-widest text-gray-400">
-                    Total Reports
-                  </p>
-                  <h2 className="text-3xl font-extrabold text-green-400 mt-1">
+              <div className="mt-6 w-full grid grid-cols-2 gap-3">
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                  <p className="text-xs text-gray-400">Total Reports</p>
+                  <h3 className="text-2xl font-bold text-green-400">
                     {reports.length}
-                  </h2>
+                  </h3>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                  <p className="text-xs text-gray-400">Account Status</p>
+                  <h3 className="text-sm font-semibold text-emerald-400">
+                    Active
+                  </h3>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ================= RIGHT PANEL ================= */}
-          <div className="lg:col-span-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6">
+          {/* RIGHT PANEL */}
+          <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
 
-            {/* TABS */}
-            <div className="flex gap-4 mb-6">
-              {["reports", "settings"].map((tab) => (
+            {/* ✅ RESPONSIVE TABS */}
+            <div className="flex gap-4 mb-6 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+              {[
+                { key: "routes", label: "Routes" },
+                { key: "garbage", label: "Garbage" },
+                { key: "medical", label: "Medical" },
+                { key: "settings", label: "Settings" },
+              ].map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-5 py-2 rounded-full text-sm font-semibold transition ${
-                    activeTab === tab
-                      ? "bg-green-500 text-black shadow-lg"
-                      : "bg-white/5 hover:bg-white/10"
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex items-center gap-1 px-1 sm:px-2 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-sm font-medium border whitespace-nowrap flex-shrink-0 transition ${
+                    activeTab === tab.key
+                      ? "bg-green-500 text-black border-green-500"
+                      : "bg-white/5 border-white/10 hover:bg-white/10"
                   }`}
                 >
-                  {tab.toUpperCase()}
+                  <span className="px-1 sm:px-2">{tab.label}</span>
                 </button>
               ))}
             </div>
 
-            {/* ================= REPORTS TAB ================= */}
-            {activeTab === "reports" && (
-              <div className="space-y-6">
-
-                {/* HEADER */}
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-green-400 tracking-wide">
-                    Your Reports
-                  </h2>
-                  <span className="text-xs px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400">
-                    Smart City System
-                  </span>
-                </div>
-
-                {/* EMPTY STATE */}
+            {/* REPORTS */}
+            {activeTab !== "settings" && (
+              <div>
                 {reports.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center text-3xl">
-                      📭
-                    </div>
-                    <p className="mt-4 text-gray-400 text-sm">
-                      No reports submitted yet.
-                    </p>
+                  <div className="text-center py-20 text-gray-400">
+                    <FileText size={40} className="mx-auto mb-3 opacity-50" />
+                    No reports found.
                   </div>
                 ) : (
-                  <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-5">
                     {reports.map((rep, i) => (
                       <div
                         key={i}
-                        className="group relative bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-green-500/20"
+                        className="bg-white/5 border border-white/10 rounded-xl p-4"
                       >
-                        {/* GLOW */}
-                        <div className="absolute inset-0 rounded-2xl bg-green-500/10 opacity-0 group-hover:opacity-100 blur-xl transition"></div>
+                        {activeTab === "garbage" && rep.images?.[0] && (
+                          <img
+                            src={rep.images[0]}
+                            alt="garbage"
+                            className="w-full h-44 sm:h-36 md:h-36 object-cover rounded-lg mb-3 cursor-pointer"
+                            onClick={() => setPreviewImage(rep.images[0])}
+                          />
+                        )}
 
-                        <div className="relative z-10">
-                          <h3 className="text-lg font-semibold text-green-300">
-                            {rep.message}
-                          </h3>
+                        <h3 className="font-semibold text-green-300">
+                          {rep.message}
+                        </h3>
 
-                          <p className="text-sm text-gray-400 mt-2">
-                            📍 {rep.address}
-                          </p>
+                        <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                          <MapPin size={12} /> {rep.address}
+                        </p>
 
-                          <p className="text-xs text-gray-500 mt-3">
-                            {new Date(rep.createdAt).toLocaleString()}
-                          </p>
+                        <p className="text-xs text-gray-500 mt-2">
+                          {new Date(rep.createdAt).toLocaleString()}
+                        </p>
 
-                          <div className="mt-4 flex items-center justify-between">
-                            <span className="px-3 py-1 text-xs rounded-full bg-green-500/10 border border-green-500/30 text-green-400">
-                              Submitted
-                            </span>
+                        <div className="mt-4 flex justify-between items-center">
+                          <span className="text-xs px-2 py-1 rounded-md bg-green-500/10 text-green-400">
+                            Submitted
+                          </span>
 
-                            <button
-                              onClick={() => removeReport(rep)}
-                              className="px-3 py-1 text-xs rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition"
-                            >
-                              Delete
-                            </button>
-                          </div>
+                          <button
+                            onClick={() => openDeleteModal(rep)}
+                            className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20"
+                          >
+                            <Trash2 size={12} /> Delete
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -232,28 +254,74 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* ================= SETTINGS TAB ================= */}
+            {/* SETTINGS */}
             {activeTab === "settings" && (
-              <div className="text-gray-300 text-sm space-y-3">
-                <p>• Account email: {user?.email}</p>
-                <p>• Reports are synced with your profile.</p>
+              <div className="space-y-4 text-sm text-gray-300">
+                <p>Email: {user?.email}</p>
                 <button
                   onClick={() => setEditMode(true)}
-                  className="mt-3 px-5 py-2 bg-green-500 text-black rounded-lg shadow-lg hover:bg-green-600 transition"
+                  className="px-4 py-2 bg-green-500 text-black rounded-lg flex items-center gap-2"
                 >
-                  Edit Profile
+                  <Settings size={16} /> Edit Profile
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* ================= EDIT PROFILE DRAWER ================= */}
-        {editMode && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-end z-50">
-            <div className="w-full sm:w-[420px] bg-[#0b1220] border-l border-white/10 p-6 shadow-2xl animate-slideIn">
+        {/* ✅ DELETE CONFIRM MODAL */}
+        {deleteModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            <div className="bg-[#0b1220] border border-white/10 rounded-xl p-6 w-full max-w-sm text-center">
+              <h3 className="text-lg font-semibold text-green-400">
+                Problem resolved?
+              </h3>
+              <p className="text-gray-400 text-sm mt-2">
+                Are you sure you want to delete this report?
+              </p>
 
-              <h2 className="text-xl font-bold text-green-400 mb-4">
+              <div className="flex gap-3 mt-5">
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 bg-green-500 text-black py-2 rounded-lg font-semibold"
+                >
+                  Resolve
+                </button>
+                <button
+                  onClick={() => setDeleteModal(false)}
+                  className="flex-1 bg-gray-600 py-2 rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ IMAGE PREVIEW MODAL */}
+        {previewImage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+            <div className="relative max-w-[95vw] max-h-[95vh] flex items-center justify-center">
+              <button
+                onClick={() => setPreviewImage(null)}
+                className="absolute top-2 right-2 bg-black/60 p-2 rounded-full hover:bg-red-500 z-50"
+              >
+                <X size={24} />
+              </button>
+
+              <img
+                src={previewImage}
+                className="max-w-full max-h-full rounded-xl border border-white/20 object-contain"
+              />
+            </div>
+          </div>
+        )}
+
+        {editMode && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">
+            <div className="bg-[#0b1220] border border-white/10 rounded-xl p-6 w-full max-w-md shadow-2xl">
+
+              <h2 className="text-xl font-semibold text-green-400 mb-4">
                 Edit Profile
               </h2>
 
@@ -261,18 +329,18 @@ export default function ProfilePage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Full Name"
-                className="w-full mb-3 bg-black/40 border border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500"
+                className="w-full mb-3 bg-black/40 border border-white/10 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               />
               <input
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 placeholder="Profile Image URL"
-                className="w-full mb-3 bg-black/40 border border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500"
+                className="w-full mb-3 bg-black/40 border border-white/10 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               />
               <input
                 value={email}
                 disabled
-                className="w-full mb-3 bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-gray-400"
+                className="w-full mb-3 bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-gray-400"
               />
 
               <div className="flex gap-3 mt-4">
@@ -294,6 +362,6 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

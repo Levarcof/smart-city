@@ -1,13 +1,19 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
-import { LayoutDashboard, Search, X } from "lucide-react"
+import { LayoutDashboard, Search, X, Trash2, Image as ImageIcon } from "lucide-react"
 
 export default function Page() {
   const [reports, setReports] = useState([])
   const [filter, setFilter] = useState("all")
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState("")
+  const [activeTab, setActiveTab] = useState("routes")
+  const [previewImage, setPreviewImage] = useState(null)
+
+  // ✅ DELETE MODAL STATES
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [deleteId, setDeleteId] = useState(null)
 
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -18,8 +24,20 @@ export default function Page() {
   const [adminLoading, setAdminLoading] = useState(false)
   const [showAdminModal, setShowAdminModal] = useState(false)
 
+  const getApiUrl = () => {
+    if (activeTab === "routes") return "/api/report/all"
+    if (activeTab === "garbage") return "/api/garbage/all"
+    if (activeTab === "medical") return "/api/medical/all"
+  }
+
+  const getDeleteApi = () => {
+    if (activeTab === "routes") return "/api/report/solve"
+    if (activeTab === "garbage") return "/api/garbage/solve"
+    if (activeTab === "medical") return "/api/medical/solve"
+  }
+
   const fetchReports = async () => {
-    const res = await fetch("/api/report/all")
+    const res = await fetch(getApiUrl())
     const data = await res.json()
     setReports(data.reports || [])
   }
@@ -32,6 +50,9 @@ export default function Page() {
 
   useEffect(() => {
     fetchReports()
+  }, [activeTab])
+
+  useEffect(() => {
     fetchStats()
   }, [])
 
@@ -39,10 +60,7 @@ export default function Page() {
     const createdAt = new Date(r.createdAt)
     const today = new Date()
 
-    if (filter === "today") {
-      return createdAt.toDateString() === today.toDateString()
-    }
-
+    if (filter === "today") return createdAt.toDateString() === today.toDateString()
     if (filter === "month") {
       const lastMonth = new Date()
       lastMonth.setMonth(today.getMonth() - 1)
@@ -53,25 +71,28 @@ export default function Page() {
       return (
         r.address?.toLowerCase().includes(search.toLowerCase()) ||
         r.message?.toLowerCase().includes(search.toLowerCase()) ||
-        r.user?.name?.toLowerCase().includes(search.toLowerCase())
+        r.name?.toLowerCase().includes(search.toLowerCase())
       )
     }
 
     return true
   })
 
-  const resolveReport = async (id) => {
-    if (!confirm("Resolve & delete this report?")) return
+  // ✅ OPEN DELETE MODAL
+  const openDeleteModal = (id) => {
+    setDeleteId(id)
+    setDeleteModal(true)
+  }
 
-    const report = reports.find((r) => r._id === id)
-    const email = report?.email
-
+  // ✅ REAL DELETE LOGIC (same API)
+  const resolveReport = async () => {
+    if (!deleteId) return
     setLoading(true)
     try {
-      const res = await fetch("/api/report/solve", {
+      const res = await fetch(getDeleteApi(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, email }),
+        body: JSON.stringify({ id: deleteId }),
       })
       const data = await res.json()
       if (data.success) fetchReports()
@@ -79,11 +100,12 @@ export default function Page() {
       console.log(err)
     }
     setLoading(false)
+    setDeleteModal(false)
+    setDeleteId(null)
   }
 
   const createAdmin = async () => {
     if (!adminEmail) return alert("Enter email first")
-
     setAdminLoading(true)
     try {
       const res = await fetch("/api/makeAdmin", {
@@ -106,32 +128,38 @@ export default function Page() {
     <>
       <Navbar />
 
-      {/* ✅ BACKGROUND FULL PAGE FIX */}
-      <div
-        className="min-h-screen w-full text-white"
-        style={{
-          background: `
-          radial-gradient(1200px 600px at 10% 10%, #064e3b 0%, transparent 40%),
-          radial-gradient(800px 400px at 90% 20%, #065f46 0%, transparent 40%),
-          #020617
-        `,
-        }}
-      >
+      <div className="min-h-screen w-full text-white bg-[#020617]">
+
         {/* TOP BAR */}
-        <div className="sticky top-0 z-40 bg-black/60 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3 flex justify-between items-center gap-3">
-          <div className="flex items-center gap-2">
+        <div className="sticky top-0 z-40 bg-black/60 backdrop-blur-xl border-b border-white/10 px-3 sm:px-8 py-2 flex flex-col sm:flex-row gap-2 sm:justify-between sm:items-center">
+
+          <div className="flex items-center gap-2 flex-wrap">
             <LayoutDashboard size={20} className="text-green-400" />
-            {/* <h1 className="text-xs sm:text-lg font-bold text-green-300 tracking-wide">
-              Enterprise Dashboard
-            </h1> */}
+
+            <div className="flex gap-1 bg-white/5 rounded-lg border border-white/10 px-1 py-1 overflow-x-auto">
+              {[
+                { key: "routes", label: "Routes" },
+                { key: "garbage", label: "Garbage" },
+                { key: "medical", label: "Medical" },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`px-3 py-1 text-xs rounded-md transition whitespace-nowrap ${
+                    activeTab === tab.key
+                      ? "bg-green-500 text-black"
+                      : "text-gray-300 hover:bg-white/10"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
-            <div className="relative w-[150px] sm:w-[280px]">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
+          <div className="flex gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-[280px]">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -142,37 +170,32 @@ export default function Page() {
 
             <button
               onClick={() => setShowAdminModal(true)}
-              className="md:px-3  px-4 py-1  md:py-1.5 text-xs sm:text-sm rounded-lg bg-green-500 text-black font-semibold hover:bg-green-400 transition"
+              className="px-3 py-1.5 text-xs sm:text-sm rounded-lg bg-green-500 text-black font-semibold whitespace-nowrap"
             >
-              + Make Admin
+              + Admin
             </button>
           </div>
         </div>
 
         {/* FILTER */}
-        <div className="flex gap-2 px-4 sm:px-8 mt-5 flex-wrap">
+        <div className="flex gap-2 px-3 sm:px-8 mt-5 flex-wrap">
           {["all", "today", "month"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all
-                ${
-                  filter === f
-                    ? "bg-green-500 text-black shadow-lg"
-                    : "bg-white/5 text-gray-300 hover:bg-white/10"
-                }`}
+              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                filter === f
+                  ? "bg-green-500 text-black shadow-lg"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+              }`}
             >
-              {f === "all"
-                ? "All Reports"
-                : f === "today"
-                ? "Today"
-                : "Last 30 Days"}
+              {f === "all" ? "All Reports" : f === "today" ? "Today" : "Last 30 Days"}
             </button>
           ))}
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 sm:px-8 py-6">
+        {/* ✅ STATS (MOBILE 2 BOX PER ROW) */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-3 sm:px-8 py-5">
           {[
             { label: "Active Reports", value: reports.length },
             { label: "Total Reports", value: reports.length },
@@ -192,19 +215,11 @@ export default function Page() {
         </div>
 
         {/* DESKTOP TABLE */}
-        <div className="hidden md:block mx-4 sm:mx-8 mb-12 rounded-xl border border-white/10 bg-black/70 backdrop-blur-xl shadow-xl overflow-hidden">
-          <div className="flex justify-between items-center px-6 py-3 border-b border-white/10">
-            <h2 className="text-sm sm:text-lg font-semibold text-green-300">
-              Reports
-            </h2>
-            <span className="text-xs text-gray-400">
-              {filteredReports.length} records
-            </span>
-          </div>
-
-          <table className="w-full text-sm">
+        <div className="hidden md:block mx-3 sm:mx-8 mb-12 rounded-xl border border-white/10 bg-black/70 backdrop-blur-xl shadow-xl overflow-x-auto">
+          <table className="min-w-[800px] w-full text-sm">
             <thead className="bg-white/5 text-gray-400">
               <tr>
+                {activeTab === "garbage" && <th className="px-6 py-2 text-left">Image</th>}
                 <th className="px-6 py-2 text-left">Location</th>
                 <th className="px-6 py-2 text-left">Type</th>
                 <th className="px-6 py-2 text-left">Date</th>
@@ -212,12 +227,23 @@ export default function Page() {
                 <th className="px-6 py-2 text-right">Action</th>
               </tr>
             </thead>
+
             <tbody>
               {filteredReports.map((r) => (
-                <tr
-                  key={r._id}
-                  className="border-t border-white/5 hover:bg-green-500/5 transition"
-                >
+                <tr key={r._id} className="border-t border-white/5 hover:bg-green-500/5 transition">
+                  {activeTab === "garbage" && (
+                    <td className="px-6 py-2">
+                      {r.images ? (
+                        <img
+                          src={r.images[0]}
+                          className="w-10 h-10 rounded-lg object-cover cursor-pointer"
+                          onClick={() => setPreviewImage(r.images[0])}
+                        />
+                      ) : (
+                        <ImageIcon size={16} className="text-gray-500" />
+                      )}
+                    </td>
+                  )}
                   <td className="px-6 py-2">{r.address}</td>
                   <td className="px-6 py-2 text-gray-300">{r.message}</td>
                   <td className="px-6 py-2 text-gray-500 text-xs">
@@ -228,10 +254,10 @@ export default function Page() {
                   </td>
                   <td className="px-6 py-2 text-right">
                     <button
-                      onClick={() => resolveReport(r._id)}
-                      className="px-2 py-1 rounded-md bg-red-500/80 hover:bg-red-500 text-xs font-semibold"
+                      onClick={() => openDeleteModal(r._id)}
+                      className="text-red-400 hover:text-red-600 transition"
                     >
-                      Resolve
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
@@ -241,43 +267,92 @@ export default function Page() {
         </div>
 
         {/* MOBILE CARDS */}
-        <div className="md:hidden space-y-4 px-4 sm:px-8 pb-12">
+        <div className="md:hidden px-3 pb-12 space-y-5">
           {filteredReports.map((r) => (
-            <div
-              key={r._id}
-              className="bg-black/70 border border-white/10 rounded-xl p-4 backdrop-blur-xl shadow-lg"
-            >
-              <div className="flex justify-between items-center">
-                <h3 className="text-green-400 font-semibold text-sm">
-                  {r?.name || "Unknown"}
-                </h3>
-                <span className="text-xs text-gray-500">
-                  {new Date(r.createdAt).toLocaleDateString()}
-                </span>
-              </div>
+            <div key={r._id} className="rounded-2xl bg-black/80 border border-white/10 p-4 shadow-xl">
 
-              <p className="mt-2 text-sm">{r.address}</p>
+              {activeTab === "garbage" && r.images && (
+                <img
+                  src={r.images[0]}
+                  className="w-full h-44 rounded-xl object-cover cursor-pointer mb-3"
+                  onClick={() => setPreviewImage(r.images[0])}
+                />
+              )}
+
+              <p className="text-sm font-medium">{r.address}</p>
               <p className="text-xs text-gray-400 mt-1">{r.message}</p>
 
+              <div className="flex justify-between mt-3 text-xs">
+                <p className="text-green-400 font-semibold">{r?.name || "Unknown"}</p>
+                <p className="text-gray-500">{new Date(r.createdAt).toLocaleString()}</p>
+              </div>
+
               <button
-                onClick={() => resolveReport(r._id)}
-                className="mt-3 w-full py-2 rounded-lg bg-red-500/80 text-xs font-semibold"
+                onClick={() => openDeleteModal(r._id)}
+                className="mt-3 w-full py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition"
               >
-                Resolve Report
+                Resolve & Delete
               </button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ✅ ADMIN MODAL WITH CROSS BUTTON */}
+   {/* IMAGE PREVIEW */}
+{previewImage && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div className="relative max-w-[95vw] max-h-[95vh] flex items-center justify-center">
+      
+      {/* CLOSE BUTTON */}
+      <button
+        onClick={() => setPreviewImage(null)}
+        className="absolute top-2 right-2 bg-black/60 p-2 rounded-full hover:bg-red-500 transition z-50"
+      >
+        <X size={15} />
+      </button>
+
+      {/* FULL SIZE IMAGE */}
+      <img width={450} height={450}
+        src={previewImage}
+        className="max-w-full max-h-full rounded-xl border border-white/20 object-contain"
+      />
+    </div>
+  </div>
+)}
+
+
+      {/* ✅ DELETE CONFIRMATION MODAL */}
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-black/80 border border-white/10 rounded-xl p-5 w-[90%] max-w-xs shadow-xl text-center">
+            <h3 className="text-green-400 font-semibold text-lg">Problem Resolved?</h3>
+            <p className="text-gray-400 text-xs mt-2">
+              Are you sure you want to delete this report?
+            </p>
+
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => setDeleteModal(false)}
+                className="flex-1 py-2 rounded-lg bg-white/10 text-sm text-white hover:bg-white/20"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={resolveReport}
+                className="flex-1 py-2 rounded-lg bg-green-500 text-black font-semibold text-sm hover:bg-green-400"
+              >
+                Resolve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+       {/* ADMIN MODAL */}
       {showAdminModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="relative w-[90%] max-w-sm bg-black/80 border border-white/10 rounded-xl p-6 shadow-xl">
-            <button
-              onClick={() => setShowAdminModal(false)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-white transition"
-            >
+            <button onClick={() => setShowAdminModal(false)} className="absolute top-3 right-3 text-gray-400 hover:text-white transition">
               <X size={18} />
             </button>
 
@@ -294,18 +369,11 @@ export default function Page() {
             />
 
             <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => setShowAdminModal(false)}
-                className="flex-1 py-2 rounded-lg bg-white/10 text-sm hover:bg-white/20"
-              >
+              <button onClick={() => setShowAdminModal(false)} className="flex-1 py-2 rounded-lg bg-white/10 text-white text-sm hover:bg-white/20">
                 Cancel
               </button>
 
-              <button
-                disabled={adminLoading}
-                onClick={createAdmin}
-                className="flex-1 py-2 rounded-lg bg-green-500 text-black font-semibold text-sm hover:bg-green-400"
-              >
+              <button disabled={adminLoading} onClick={createAdmin} className="flex-1 py-2 rounded-lg bg-green-500 text-black font-semibold text-sm hover:bg-green-400">
                 {adminLoading ? "Processing..." : "Make Admin"}
               </button>
             </div>

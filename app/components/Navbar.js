@@ -29,9 +29,9 @@ const Navbar = () => {
 
         {/* LOGO */}
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/map.png" alt="logo" width={32} height={32} />
+          <Image src="/logo.png" alt="logo" width={50} height={50} />
           <span className="text-xl font-bold text-green-700">
-            SafeRoute
+            Smart city
           </span>
         </Link>
 
@@ -40,9 +40,9 @@ const Navbar = () => {
           <Link href="/" className="text-gray-700 font-medium hover:text-green-700 transition">
             Home
           </Link>
-          <Link href="/reports" className="text-gray-700 font-medium hover:text-green-700 transition">
+          {/* <Link href="/reports" className="text-gray-700 font-medium hover:text-green-700 transition">
             Reports
-          </Link>
+          </Link> */}
           <Link href="/about" className="text-gray-700 font-medium hover:text-green-700 transition">
             About
           </Link>
@@ -125,9 +125,9 @@ const Navbar = () => {
             <Link href="/" className="text-gray-700 hover:text-green-700 font-medium">
               Home
             </Link>
-            <Link href="/reports" className="text-gray-700 hover:text-green-700 font-medium">
+            {/* <Link href="/reports" className="text-gray-700 hover:text-green-700 font-medium">
               Reports
-            </Link>
+            </Link> */}
             <Link href="/about" className="text-gray-700 hover:text-green-700 font-medium">
               About
             </Link>
