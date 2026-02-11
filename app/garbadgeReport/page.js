@@ -61,8 +61,6 @@ export default function GarbageReportPage() {
 
   // ================= CLOUDINARY UPLOAD =================
   const uploadToCloudinary = (file, tempURL) => {
-    console.log("Preset:", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET);
-console.log("CloudName:", process.env.NEXT_PUBLIC_CLOUDINARY_NAME);
 
     return new Promise((resolve) => {
       setLoading(true);
