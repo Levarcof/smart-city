@@ -112,13 +112,11 @@ export default function GarbageReportPage() {
   };
 
   // ================= SUBMIT REPORT =================
+  // ================= SUBMIT REPORT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ❗ Wait until image uploaded
-    const uploadedImages = photos
-      .filter((p) => p.uploadedURL)
-      .map((p) => p.uploadedURL);
+    const uploadedImages = photos.filter((p) => p.uploadedURL).map((p) => p.uploadedURL);
 
     if (photos.length === 0) {
       return alert("❌ Please upload an image first!");
@@ -131,9 +129,30 @@ export default function GarbageReportPage() {
     setLoading(true);
 
     try {
+      // ✅ Step 1: Validate Image via AI
+      console.log("image Url : ", uploadedImages[0])
+      const validationRes = await fetch("/api/validateImage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl: uploadedImages[0] }),
+      });
+
+      const validationData = await validationRes.json();
+
+      if (!validationData.success) {
+        return alert("❌ AI detection failed");
+      }
+
+      if (!validationData.isGarbage) {
+        return alert("⚠️Image is not related to garbage or Trash");
+      }
+
+
+      // ✅ Step 2: Get Location
       const loc = await getCurrentLocation();
       setLocation(loc);
 
+      // ✅ Step 3: Submit Report
       const res = await fetch("/api/garbage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -143,7 +162,7 @@ export default function GarbageReportPage() {
           message,
           address: loc.address,
           location: { lat: loc.lat, lng: loc.lng },
-          images: uploadedImages, // ✅ FINAL IMAGE URL
+          images: uploadedImages,
         }),
       });
 
@@ -163,6 +182,7 @@ export default function GarbageReportPage() {
       alert("❌ Server or location error!");
     }
   };
+
 
 
   // ================= UI =================

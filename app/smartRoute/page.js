@@ -77,7 +77,7 @@ export default function Page() {
     }
     return count;
   }
-
+  
   async function findRoutes() {
     try {
       if (!from || !to) return alert("Enter both locations");
@@ -153,13 +153,13 @@ export default function Page() {
               Apple-level UI for AI-powered smart city navigation
             </p>
           </div>
-        <Link href="/reports">
-          <button
-            onClick={() => router.push("/report")}
-            className="px-7 py-3 rounded-full bg-gradient-to-r from-green-400 to-emerald-600 text-black font-semibold shadow-xl hover:scale-105 transition"
-          >
-            🚨 Report Issue
-          </button>
+          <Link href="/reports">
+            <button
+              onClick={() => router.push("/report")}
+              className="px-7 py-3 rounded-full bg-gradient-to-r from-green-400 to-emerald-600 text-black font-semibold shadow-xl hover:scale-105 transition"
+            >
+              🚨 Report Issue
+            </button>
           </Link>
         </div>
       </section>

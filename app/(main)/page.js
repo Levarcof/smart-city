@@ -25,7 +25,7 @@ export default function Home() {
               Transforming Cities into Smart, Safe & Clean Spaces
             </h1>
             <p className="mt-4 text-gray-300 text-base sm:text-lg md:text-xl">
-              AI-powered solutions for smarter routes, cleaner streets, and better healthcare access.  
+              AI-powered solutions for smarter routes, cleaner streets, and better healthcare access.
               Experience city management like never before.
             </p>
           </div>
