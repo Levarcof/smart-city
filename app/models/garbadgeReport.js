@@ -12,9 +12,20 @@ const garbage = new mongoose.Schema(
         },
         images: {
             type: [String],
-            require : true,
+            require: true,
             default: []
-        }
+        },
+        departments: [
+            {
+                departmentName: String,
+                address: String,
+                email : String,
+                location: {
+                    lat: Number,
+                    lng: Number,
+                }
+            }
+        ]
     },
     { timestamps: true }
 

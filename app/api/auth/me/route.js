@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/app/lib/db";
 import jwt from "jsonwebtoken"
 import User from "@/app/models/User";
+import GarbageDepartment from "@/app/models/GarbageDepartment";
 import { cookies } from "next/headers";
 
 export async function GET() {
@@ -19,8 +20,13 @@ export async function GET() {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         await connectDB()
-        const user = await User.findById(decoded.id).select("-password")
-
+        let user  = null
+        if(decoded.role == "department"){
+            user = await GarbageDepartment.findById(decoded.id).select("-password")
+        }
+        else{
+            user =await User.findById(decoded.id).select("-password")
+        }
         return NextResponse.json(
             { user },
             { status: 200 }

@@ -14,6 +14,8 @@ export default function ProfilePage() {
   const [image, setImage] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null); // File selected
+  const [uploading, setUploading] = useState(false);
 
   const [activeTab, setActiveTab] = useState("routes");
 
@@ -29,19 +31,20 @@ export default function ProfilePage() {
       setName(user.name || "");
       setImage(user.image || "");
       setEmail(user.email || "");
+
     }
   }, [user]);
 
   const getReportApi = () => {
     if (activeTab === "routes") return "/api/myReport/road";
     if (activeTab === "garbage") return "/api/myReport/garbage";
-    if (activeTab === "medical") return "/api/myReport/medical";
+    // if (activeTab === "medical") return "/api/myReport/medical";
   };
 
   const getDeleteApi = () => {
     if (activeTab === "routes") return "/api/report/solve";
     if (activeTab === "garbage") return "/api/garbage/solve";
-    if (activeTab === "medical") return "/api/medical/solve";
+    // if (activeTab === "medical") return "/api/medical/solve";
   };
 
   useEffect(() => {
@@ -64,13 +67,46 @@ export default function ProfilePage() {
     fetchReports();
   }, [user, activeTab]);
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const uploadToCloudinary = async () => {
+    if (!file) return image; // If no file, return previous URL
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET); // Cloudinary preset
+    data.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_NAME);
+
+    setUploading(true);
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const json = await res.json();
+      setUploading(false);
+      return json.secure_url; // Cloudinary URL
+    } catch (error) {
+      setUploading(false);
+      console.error("Cloudinary Upload Error:", error);
+      alert("❌ Image upload failed");
+      return "";
+    }
+  };
+
+
   const updateProfile = async () => {
     setLoading(true);
+    const imageUrl = await uploadToCloudinary();
     try {
       const res = await fetch("/api/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, image, email }),
+        body: JSON.stringify({ name, image: imageUrl, email }),
       });
 
       const data = await res.json();
@@ -182,17 +218,16 @@ export default function ProfilePage() {
               {[
                 { key: "routes", label: "Routes" },
                 { key: "garbage", label: "Garbage" },
-                { key: "medical", label: "Medical" },
+                // { key: "medical", label: "Medical" },
                 { key: "settings", label: "Settings" },
               ].map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-1 px-1 sm:px-2 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-sm font-medium border whitespace-nowrap flex-shrink-0 transition ${
-                    activeTab === tab.key
-                      ? "bg-green-500 text-black border-green-500"
-                      : "bg-white/5 border-white/10 hover:bg-white/10"
-                  }`}
+                  className={`flex items-center gap-1 px-1 sm:px-2 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-sm font-medium border whitespace-nowrap flex-shrink-0 transition ${activeTab === tab.key
+                    ? "bg-green-500 text-black border-green-500"
+                    : "bg-white/5 border-white/10 hover:bg-white/10"
+                    }`}
                 >
                   <span className="px-1 sm:px-2">{tab.label}</span>
                 </button>
@@ -230,6 +265,12 @@ export default function ProfilePage() {
                         <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
                           <MapPin size={12} /> {rep.address}
                         </p>
+                        {rep.departments && 
+                        <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                          <MapPin size={12} />Send to :- {rep.departments?.[0]?.departmentName || "Not Assigned"}
+                        </p>
+                        }
+                        
 
                         <p className="text-xs text-gray-500 mt-2">
                           {new Date(rep.createdAt).toLocaleString()}
@@ -332,10 +373,10 @@ export default function ProfilePage() {
                 className="w-full mb-3 bg-black/40 border border-white/10 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               />
               <input
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="Profile Image URL"
-                className="w-full mb-3 bg-black/40 border border-white/10 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="spotify-input bg-white/10 text-white"
               />
               <input
                 value={email}

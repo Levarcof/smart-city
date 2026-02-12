@@ -4,13 +4,20 @@ import Image from "next/image"
 import Link from "next/link"
 import { useUser } from "../context/UserContext"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 const Navbar = () => {
+
   const router = useRouter()
-  const { user, setUser } = useUser()
+  const { user, setUser , loading } = useUser()
   const [showProfile, setShowProfile] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
 
+useEffect(() => {
+  if (user?.role) {
+    router.refresh()   // 🔥 layout + server components refresh
+  }
+}, [user?.role])
   const logout = async () => {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" })
@@ -22,6 +29,10 @@ const Navbar = () => {
       console.log("Logout error:", error)
     }
   }
+
+
+
+  
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -46,7 +57,7 @@ const Navbar = () => {
           <Link href="/about" className="text-gray-700 font-medium hover:text-green-700 transition">
             About
           </Link>
-          {user?.role == 'admin' && 
+          { !loading && user?.role == 'admin' && 
           <Link href="/dashboard" className="text-gray-700 font-medium hover:text-green-700 transition">
             Dashboard
           </Link> }

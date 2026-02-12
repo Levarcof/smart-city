@@ -8,6 +8,7 @@ export default function Page() {
   const [filter, setFilter] = useState("all")
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState("")
+  const [send , setSend] = useState(false)
   const [activeTab, setActiveTab] = useState("routes")
   const [previewImage, setPreviewImage] = useState(null)
 
@@ -27,13 +28,13 @@ export default function Page() {
   const getApiUrl = () => {
     if (activeTab === "routes") return "/api/report/all"
     if (activeTab === "garbage") return "/api/garbage/all"
-    if (activeTab === "medical") return "/api/medical/all"
+    // if (activeTab === "medical") return "/api/medical/all"
   }
 
   const getDeleteApi = () => {
     if (activeTab === "routes") return "/api/report/solve"
     if (activeTab === "garbage") return "/api/garbage/solve"
-    if (activeTab === "medical") return "/api/medical/solve"
+    // if (activeTab === "medical") return "/api/medical/solve"
   }
 
   const fetchReports = async () => {
@@ -140,7 +141,7 @@ export default function Page() {
               {[
                 { key: "routes", label: "Routes" },
                 { key: "garbage", label: "Garbage" },
-                { key: "medical", label: "Medical" },
+                // { key: "medical", label: "Medical" },
               ].map((tab) => (
                 <button
                   key={tab.key}
@@ -221,6 +222,10 @@ export default function Page() {
               <tr>
                 {activeTab === "garbage" && <th className="px-6 py-2 text-left">Image</th>}
                 <th className="px-6 py-2 text-left">Location</th>
+              {activeTab === "garbage" &&  <th className="px-6 py-2 text-left">Send to</th>}
+          
+
+              
                 <th className="px-6 py-2 text-left">Type</th>
                 <th className="px-6 py-2 text-left">Date</th>
                 <th className="px-6 py-2 text-left">User</th>
@@ -245,6 +250,12 @@ export default function Page() {
                     </td>
                   )}
                   <td className="px-6 py-2">{r.address}</td>
+
+                  {activeTab === "garbage" && r.departments && (
+                    <td className="px-6 py-2">
+                     {r.departments[0].departmentName}
+                    </td>
+                  )}
                   <td className="px-6 py-2 text-gray-300">{r.message}</td>
                   <td className="px-6 py-2 text-gray-500 text-xs">
                     {new Date(r.createdAt).toLocaleString()}
@@ -280,6 +291,11 @@ export default function Page() {
               )}
 
               <p className="text-sm font-medium">{r.address}</p>
+               {activeTab === "garbage" && r.departments && 
+                    <div className="rounded-2xl bg-black/80 border text-gray-300 border-white/10 py-1 shadow-sm">Send to :- {r.departments[0].departmentName}</div>
+                     
+                  }
+
               <p className="text-xs text-gray-400 mt-1">{r.message}</p>
 
               <div className="flex justify-between mt-3 text-xs">

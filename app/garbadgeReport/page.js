@@ -113,7 +113,6 @@ export default function GarbageReportPage() {
   };
 
   // ================= SUBMIT REPORT =================
-  // ================= SUBMIT REPORT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 

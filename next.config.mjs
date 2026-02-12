@@ -14,8 +14,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "tse2.mm.bing.net",
       },
+      
     
     ],
+    domains: ['res.cloudinary.com'],
   },
 };
 

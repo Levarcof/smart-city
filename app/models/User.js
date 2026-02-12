@@ -10,9 +10,9 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-    image :{
-    type: String,
-    required: true
+   image: {
+    type: String, // Cloudinary URL
+    default: "",  // Initially empty, will be set after upload
   },
   password: {
     type: String,

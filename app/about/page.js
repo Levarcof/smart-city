@@ -29,7 +29,7 @@ export default function AboutPage() {
       <Navbar />
 
       {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center bg-gradient-to-br from-green-900 via-green-700 to-emerald-600 text-white overflow-hidden">
+      <section className="relative md:mt-[-90] mt-[-130]  min-h-screen flex  items-center bg-gradient-to-br from-green-900 via-green-700 to-emerald-600 text-white overflow-hidden">
         {/* Animated floating blobs */}
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-400/30 rounded-full filter blur-3xl animate-blob mix-blend-screen"></div>
         <div className="absolute -bottom-40 -right-20 w-80 h-80 bg-green-500/20 rounded-full filter blur-3xl animate-blob animation-delay-2000 mix-blend-screen"></div>
@@ -43,9 +43,9 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
           {/* Hero text */}
           <div className="space-y-6">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
               Smart City Solutions <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-200 to-emerald-400">
+              <span className="text-transparent text-2xl md:text-4xl bg-clip-text bg-gradient-to-r from-green-200 to-emerald-400">
                 Safer • Cleaner • Healthier
               </span>
             </h1>
@@ -54,12 +54,12 @@ export default function AboutPage() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="/smartRoute">
-                <button className="bg-white text-green-800 px-10 py-4 rounded-full font-bold shadow-[0_20px_50px_rgba(0,255,128,0.35)] hover:scale-110 hover:shadow-[0_25px_60px_rgba(0,255,128,0.45)] transition-transform duration-500">
+                <button className="bg-white text-green-800 md:px-6 md:p-2 px-4 py-1 rounded-full font-bold shadow-[0_20px_50px_rgba(0,255,128,0.35)] hover:scale-110 hover:shadow-[0_25px_60px_rgba(0,255,128,0.45)] transition-transform duration-500">
                   Get Started 🚀
                 </button>
               </Link>
               <Link href="/profile">
-                <button className="border border-white/30 px-10 py-4 rounded-full hover:bg-white/10 transition duration-300">
+                <button className="border border-white/30 md:px-6 md:p-2 px-5 py-1 rounded-full hover:bg-white/10 transition duration-300">
                   View profile
                 </button>
               </Link>

@@ -4,12 +4,13 @@ import Navbar from "../components/Navbar"
 import { MapPin, Trash2, HeartPulse } from "lucide-react"
 
 export default function Home() {
+
   return (
     <>
       {/* ✅ Navbar */}
       <Navbar />
 
-      <div className="relative min-h-screen w-full text-white overflow-x-hidden">
+      <div className="relative min-h-screen mt-[-20] w-full text-white overflow-x-hidden">
         {/* Animated gradient background */}
         <div className="absolute inset-0 -z-10">
           <div className="w-full h-full bg-[#020617] relative">
@@ -21,12 +22,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
           {/* HERO SECTION */}
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-green-400 leading-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-green-400 leading-tight">
               Transforming Cities into Smart, Safe & Clean Spaces
             </h1>
-            <p className="mt-4 text-gray-300 text-base sm:text-lg md:text-xl">
+            <p className="mt-4 text-gray-300 text-base text-sm sm:text-lg md:text-xl">
               AI-powered solutions for smarter routes, cleaner streets, and better healthcare access.
-              Experience city management like never before.
+              .
             </p>
           </div>
 
@@ -66,7 +67,7 @@ export default function Home() {
 
             {/* HEALTH CARE */}
             <Link
-              href="/smart-city/health"
+              href="/health"
               className="group relative flex flex-col items-start justify-between bg-black/60 backdrop-blur-xl border border-green-500/20 rounded-2xl p-8 hover:border-green-400 hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-green-400/50"
             >
               <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-green-500/20 mb-6 group-hover:bg-green-500/40 transition">
