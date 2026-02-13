@@ -7,7 +7,6 @@ import { MapPin, Trash2, HeartPulse, ShieldCheck, Users, Activity } from "lucide
 
 export default function AboutPage() {
 
-  // Floating particles animation
   useEffect(() => {
     const particles = document.querySelectorAll(".particle");
     let angle = 0;
@@ -28,176 +27,168 @@ export default function AboutPage() {
     <>
       <Navbar />
 
-      {/* HERO SECTION */}
-      <section className="relative md:mt-[-90] mt-[-130]  min-h-screen flex  items-center bg-gradient-to-br from-green-900 via-green-700 to-emerald-600 text-white overflow-hidden">
-        {/* Animated floating blobs */}
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-400/30 rounded-full filter blur-3xl animate-blob mix-blend-screen"></div>
-        <div className="absolute -bottom-40 -right-20 w-80 h-80 bg-green-500/20 rounded-full filter blur-3xl animate-blob animation-delay-2000 mix-blend-screen"></div>
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10"></div>
+      {/* ================= HERO SECTION ================= */}
+      <section className="relative pt-20 md:pt-24 lg:pt-28 min-h-[85vh] flex items-center bg-gradient-to-br from-green-900 via-green-800 to-emerald-700 text-white">
 
-        {/* Floating micro-particles */}
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="particle absolute w-3 h-3 bg-green-400 rounded-full opacity-60 mix-blend-screen"></div>
-        ))}
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 w-full">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
 
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
-          {/* Hero text */}
-          <div className="space-y-6">
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
-              Smart City Solutions <br />
-              <span className="text-transparent text-2xl md:text-4xl bg-clip-text bg-gradient-to-r from-green-200 to-emerald-400">
-                Safer • Cleaner • Healthier
-              </span>
-            </h1>
-            <p className="text-white/90 text-lg max-w-xl">
-              Navigate safely, report garbage, and access medical services instantly. Our platform combines AI, community reports, and real-time data for smarter city living.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/smartRoute">
-                <button className="bg-white text-green-800 md:px-6 md:p-2 px-4 py-1 rounded-full font-bold shadow-[0_20px_50px_rgba(0,255,128,0.35)] hover:scale-110 hover:shadow-[0_25px_60px_rgba(0,255,128,0.45)] transition-transform duration-500">
-                  Get Started 🚀
-                </button>
-              </Link>
-              <Link href="/profile">
-                <button className="border border-white/30 md:px-6 md:p-2 px-5 py-1 rounded-full hover:bg-white/10 transition duration-300">
-                  View profile
-                </button>
-              </Link>
-            </div>
-          </div>
+            {/* LEFT CONTENT */}
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight">
+                Smart city, Resolve
+                <span className="block text-2xll text-emerald-300 mt-2">
+                  Instantly & Easily
+                </span>
+              </h1>
 
-          {/* Hero Image */}
-          <div className="relative flex justify-center">
-            <div className="absolute -inset-12 bg-white/10 backdrop-blur-3xl rounded-3xl animate-pulse"></div>
-            <div className="relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-4 shadow-2xl hover:scale-105 transition-transform duration-700 perspective-1000">
-              <div className="transform hover:rotate-y-6 hover:rotate-x-2 transition-transform duration-700">
-                <Image
-                  src="/city.png"
-                  alt="City Preview"
-                  width={600}
-                  height={400}
-                  className="rounded-3xl shadow-2xl"
-                />
+              <p className="mt-5 text-sm sm:text-base md:text-lg text-green-100 max-w-xl mx-auto md:mx-0">
+                Locate trusted medical services near you with real-time accuracy.
+                Get fast access during emergencies when every second truly matters.
+              </p>
+
+              {/* BUTTONS */}
+              <div className="mt-8 flex justify-center md:justify-start gap-4 flex-nowrap">
+                <Link href="/smartRoute">
+                  <button className="px-6 sm:px-7 py-2.5 sm:py-3 bg-white text-green-800 text-sm sm:text-base font-semibold rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition duration-300 whitespace-nowrap">
+                    Get Started
+                  </button>
+                </Link>
+
+                <Link href="/profile">
+                  <button className="px-6 sm:px-7 py-2.5 sm:py-3 border border-white/70 text-sm sm:text-base font-semibold rounded-lg hover:bg-white hover:text-green-800 transition duration-300 whitespace-nowrap">
+                    View Profile
+                  </button>
+                </Link>
               </div>
             </div>
+
+            {/* RIGHT IMAGE */}
+            <div className="flex justify-center md:justify-end">
+              <Image
+                src="/city.png"
+                alt="Smart City"
+                width={520}
+                height={520}
+                priority
+                className="w-64 rounded-3xl w-[500px]  md:w-[420px] lg:w-[480px] object-contain drop-shadow-2xl"
+              />
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section className="relative bg-gradient-to-b from-green-50 via-white to-green-50 py-36 overflow-hidden">
-        <div className="absolute -top-20 left-0 w-72 h-72 bg-green-300/20 rounded-full filter blur-3xl animate-blob animation-delay-1000 mix-blend-screen"></div>
-        <div className="absolute -bottom-20 right-0 w-96 h-96 bg-emerald-400/30 rounded-full filter blur-3xl animate-blob mix-blend-screen"></div>
-
-        <div className="max-w-7xl mx-auto px-6 text-center mb-20">
-          <h2 className="text-5xl font-extrabold text-green-900 mb-6">Our Smart Features</h2>
-          <p className="text-gray-700 text-lg max-w-3xl mx-auto">
+      {/* ================= FEATURES ================= */}
+      <section className="bg-gradient-to-b from-green-50 via-white to-green-50 py-24 sm:py-28">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-900 mb-4">
+            Our Smart Features
+          </h2>
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
             Complete city management solution with navigation, sanitation reporting, and emergency services.
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 grid md:grid-cols-3 gap-8 lg:gap-12">
           {[
             {
               title: "Smart Route Planner",
-              desc: "AI-driven route suggestions with safety-first routing, traffic-aware navigation, and incident alerts.",
-              icon: <MapPin size={48} className="text-green-400 mb-4 group-hover:text-emerald-300 transition-colors duration-300" />,
+              desc: "AI-driven route suggestions with safety-first routing and traffic-aware navigation.",
+              icon: <MapPin size={42} className="text-emerald-600 mb-4" />,
               image: "/route-demo.png",
-              hoverShadow: "hover:shadow-emerald-400/50",
             },
             {
               title: "Garbage Reporting",
-              desc: "Snap photos of overflowing bins and notify authorities instantly to maintain a cleaner city.",
-              icon: <Trash2 size={48} className="text-green-400 mb-4 group-hover:text-yellow-400 transition-colors duration-300" />,
+              desc: "Snap photos of overflowing bins and notify authorities instantly.",
+              icon: <Trash2 size={42} className="text-yellow-500 mb-4" />,
               image: "/garbage-demo.png",
-              hoverShadow: "hover:shadow-yellow-400/50",
             },
             {
               title: "Medical Assistance",
-              desc: "Locate nearby hospitals and medical services instantly for quick emergency response.",
-              icon: <HeartPulse size={48} className="text-green-400 mb-4 group-hover:text-red-400 transition-colors duration-300" />,
+              desc: "Locate nearby hospitals and medical services instantly.",
+              icon: <HeartPulse size={42} className="text-red-500 mb-4" />,
               image: "/medical-demo.png",
-              hoverShadow: "hover:shadow-red-400/50",
             },
           ].map((feature, i) => (
-            <div key={i} className={`bg-white/10 backdrop-blur-3xl border border-white/20 p-10 rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500 flex flex-col items-center text-center group ${feature.hoverShadow}`}>
-              {feature.icon}
-              <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
-              <p className="text-white/80 mb-4">{feature.desc}</p>
+            <div key={i} className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition duration-300 text-center">
+              <div className="flex justify-center">{feature.icon}</div>
+              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+              <p className="text-gray-600 text-sm sm:text-base mb-5">{feature.desc}</p>
               <Image
                 src={feature.image}
                 alt={feature.title}
-                width={300}
-                height={180}
-                className="rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-500"
+                width={320}
+                height={200}
+                className="rounded-xl mx-auto object-cover"
               />
             </div>
           ))}
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="bg-green-900 py-36 text-white">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
-          {[ 
-            { value: "10K+", label: "Active Users", icon: <Users size={40} className="mx-auto mb-2 text-green-400" /> },
-            { value: "120K+", label: "Routes Analyzed", icon: <Activity size={40} className="mx-auto mb-2 text-green-400" /> },
-            { value: "5K+", label: "Garbage Reports", icon: <Trash2 size={40} className="mx-auto mb-2 text-yellow-400" /> },
-            { value: "24/7", label: "Emergency Support", icon: <HeartPulse size={40} className="mx-auto mb-2 text-red-400" /> },
+      {/* ================= STATS ================= */}
+      <section className="bg-green-900 py-20 sm:py-24 text-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+          {[
+            { value: "10K+", label: "Active Users", icon: <Users size={34} className="mx-auto mb-3 text-emerald-300" /> },
+            { value: "120K+", label: "Routes Analyzed", icon: <Activity size={34} className="mx-auto mb-3 text-emerald-300" /> },
+            { value: "5K+", label: "Garbage Reports", icon: <Trash2 size={34} className="mx-auto mb-3 text-yellow-400" /> },
+            { value: "24/7", label: "Emergency Support", icon: <HeartPulse size={34} className="mx-auto mb-3 text-red-400" /> },
           ].map((stat, i) => (
-            <div key={i} className="transition-transform hover:scale-110 duration-300">
+            <div key={i}>
               {stat.icon}
-              <h3 className="text-4xl font-extrabold mb-2">{stat.value}</h3>
-              <p className="text-gray-200 font-medium">{stat.label}</p>
+              <h3 className="text-2xl sm:text-3xl font-bold">{stat.value}</h3>
+              <p className="text-green-200 text-sm sm:text-base">{stat.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CORE PRINCIPLES */}
-      <section className="relative bg-gradient-to-b from-green-50 to-white py-36 overflow-hidden">
-        <div className="absolute -top-20 left-0 w-72 h-72 bg-green-300/20 rounded-full filter blur-3xl animate-blob animation-delay-1000 mix-blend-screen"></div>
-        <div className="absolute -bottom-20 right-0 w-96 h-96 bg-emerald-400/30 rounded-full filter blur-3xl animate-blob mix-blend-screen"></div>
-
-        <div className="max-w-7xl mx-auto px-6 text-center mb-16">
-          <h2 className="text-5xl font-extrabold text-green-900 mb-6">Our Core Principles</h2>
-          <p className="text-gray-700 text-lg max-w-3xl mx-auto">
-            Safety, Community Engagement, and AI-driven intelligence guide every aspect of our platform.
+      {/* ================= CORE PRINCIPLES ================= */}
+      <section className="bg-white py-24 sm:py-28">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 text-center mb-14">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-900 mb-4">
+            Our Core Principles
+          </h2>
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
+            Safety, community engagement, and AI-driven intelligence guide our platform.
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-10 grid md:grid-cols-3 gap-8">
           {[
-            { title: "Safety First", desc: "Maximizing safety in every route and alert.", icon: <ShieldCheck size={36} className="text-green-400 mb-4" /> },
-            { title: "Community Driven", desc: "Citizen participation improves sanitation & safety.", icon: <Users size={36} className="text-green-400 mb-4" /> },
-            { title: "AI Intelligence", desc: "Data-powered insights optimize routes & emergency response.", icon: <Activity size={36} className="text-green-400 mb-4" /> },
-          ].map((value, i) => (
-            <div key={i} className="bg-white/10 backdrop-blur-3xl border border-white/20 p-10 rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500 flex flex-col items-center text-center group">
-              {value.icon}
-              <h3 className="text-2xl font-bold mb-3">{value.title}</h3>
-              <p className="text-white/80">{value.desc}</p>
+            { title: "Safety First", desc: "Maximizing safety in every route and alert.", icon: <ShieldCheck size={32} className="text-emerald-600 mb-3" /> },
+            { title: "Community Driven", desc: "Citizen participation improves sanitation & safety.", icon: <Users size={32} className="text-emerald-600 mb-3" /> },
+            { title: "AI Intelligence", desc: "Data-powered insights optimize routes & emergency response.", icon: <Activity size={32} className="text-emerald-600 mb-3" /> },
+          ].map((item, i) => (
+            <div key={i} className="bg-green-50 rounded-xl p-8 shadow-md hover:shadow-lg transition duration-300 text-center">
+              <div className="flex justify-center">{item.icon}</div>
+              <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+              <p className="text-gray-600 text-sm sm:text-base">{item.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative bg-gradient-to-r from-green-800 to-emerald-600 text-white py-32 text-center overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-green-400/20 rounded-full filter blur-3xl animate-blob animation-delay-2000 mix-blend-screen"></div>
-        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/20 rounded-full filter blur-3xl animate-blob mix-blend-screen"></div>
+      {/* ================= CTA ================= */}
+      <section className="bg-gradient-to-r from-green-800 to-emerald-600 text-white py-20 sm:py-24 text-center">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5">
+            Empowering Smarter Cities
+          </h2>
+          <p className="text-green-100 text-sm sm:text-base md:text-lg mb-8">
+            Safe Route Analyzer helps citizens and municipalities act in real-time for safer, cleaner, and healthier urban living.
+          </p>
 
-        <h2 className="text-5xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-green-200 to-emerald-300">
-          Empowering Smarter Cities
-        </h2>
-        <p className="text-white/80 text-lg mb-12 max-w-2xl mx-auto">
-          Safe Route Analyzer helps citizens and municipalities act in real-time for safer, cleaner, and healthier urban living.
-        </p>
-        <Link href="/smartRoute">
-          <button className="bg-white text-green-800 px-12 py-4 rounded-full font-bold shadow-[0_20px_50px_rgba(0,255,128,0.35)] hover:scale-110 hover:shadow-[0_25px_60px_rgba(0,255,128,0.45)] transition-transform duration-500">
-            Get Started 🚀
-          </button>
-        </Link>
+          <Link href="/smartRoute">
+            <button className="bg-white text-green-800 px-8 sm:px-10 py-3 rounded-lg font-semibold shadow-md hover:shadow-xl hover:scale-105 transition duration-300">
+              Get Started 🚀
+            </button>
+          </Link>
+        </div>
       </section>
+
     </>
   );
 }

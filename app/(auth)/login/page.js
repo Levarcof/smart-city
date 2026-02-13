@@ -67,12 +67,12 @@ const Page = () => {
         {/* LEFT SECTION */}
         <div className="md:w-1/2 bg-gradient-to-br from-green-600 to-green-800 text-white flex flex-col items-center justify-center p-10">
 
-          <div className="w-24 h-24 relative mb-4">
+          <div className="w-34 h-34 relative mb-4">
             <Image
               src="/logo.png"
               alt="Logo"
               fill
-              className="object-contain"
+              className="object-contain "
             />
           </div>
 

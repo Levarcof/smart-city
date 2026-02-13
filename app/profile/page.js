@@ -162,7 +162,7 @@ export default function ProfilePage() {
 
         {/* HEADER */}
         <div className="max-w-7xl text-center mx-auto px-2 sm:px-4 pt-10 pb-6">
-          <h1 className="text-3xl md:text-4xl font-bold">Profile Dashboard</h1>
+          <h1 className="text-3xl text-green-400 md:text-4xl font-bold">Profile Dashboard</h1>
           <p className="text-gray-400 text-sm mt-1">
             Manage your profile and reports in one place
           </p>
