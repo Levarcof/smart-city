@@ -23,6 +23,7 @@ export async function GET(req) {
     const type = searchParams.get("type") || "human";
 
     const apiKey = process.env.GEOAPIFY_KEY;
+    console.log("api key : ",apiKey)
 
     if (!lat || !lng) {
       return NextResponse.json({ error: "Location missing" }, { status: 400 });
