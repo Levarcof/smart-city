@@ -7,8 +7,8 @@ function getDistance(lat1, lon1, lat2, lon2) {
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
@@ -22,19 +22,23 @@ export async function GET(req) {
     const radius = searchParams.get("radius") || 5000;
     const type = searchParams.get("type") || "human";
 
-    const apiKey = process.env.NEXT_PUBLIC_GEOAPIFY_KEY;
+    const apiKey = process.env.GEOAPIFY_KEY;
 
     if (!lat || !lng) {
       return NextResponse.json({ error: "Location missing" }, { status: 400 });
     }
-
- let categories =
-  type === "animal"
-    ? "pet.veterinary"
-    : "healthcare.hospital";
+    const latNum = parseFloat(lat);
+    const lngNum = parseFloat(lng);
 
 
-    const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${lng},${lat},${radius}&limit=50&apiKey=${apiKey}`;
+    let categories =
+      type === "animal"
+        ? "pet.veterinary"
+        : "healthcare.hospital";
+
+
+    
+    const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${lngNum},${latNum},${radius}&limit=50&apiKey=${apiKey}`;
 
     const res = await fetch(url);
     const data = await res.json();
